@@ -74,7 +74,21 @@ We are here to test your skills in flutter, so you are required to make your cha
 
 - If the user deletes all the vehicles he should see **'No Vehicles Found!!'**
 
-### Step 4: Submit
+### Step 4: API wireing (Optional)
+
+- It is mandatory to complete step 2 before moving on with step 4.
+
+- In this step the data of the vehicles, we can get it from an API
+
+- The data can fetched using `GET` call from endpoing `https://myfakeapi.com/api/cars/`. This returns 1000 Vehicles details but you are required to show just **first 10**. For further details on the API refer the link [MyFakeAPI](https://myfakeapi.com/)
+
+- Do the implementation of the below function in (**services/vehicle_service.dart**). And call the function when you want to load the data.
+
+        `static Future<Vehicle> fetchVehicles() async {
+          //Your Code to fetch vehicles
+        }`
+
+### Step 5: Submit
 
 After you have completed the above steps, you can generate the .apk file using this [reference](https://flutter.dev/docs/deployment/android)
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_skills_test/screens/vehicles.dart';
+import 'package:flutter_skills_test/screens/vehicles/vehicles.dart';
 import 'package:flutter_skills_test/utils/utils.dart';
 
 void main() {

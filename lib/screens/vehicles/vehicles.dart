@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_skills_test/model/vehicle_model.dart';
+import 'package:flutter_skills_test/resources/vehicle_api.dart';
 import 'package:flutter_skills_test/screens/vehicles/widgets/car_detail_edit.dart';
 import 'package:flutter_skills_test/screens/vehicles/widgets/car_detail_row.dart';
 import 'dart:math' as math;
@@ -21,14 +22,15 @@ class _VehicleState extends State<Vehicles> {
   TextEditingController _carVin = TextEditingController();
   TextEditingController _carPrice = TextEditingController();
 
-  var data = Vehicle.staticData();
+  var vehicleList;
   var dataLength;
   var currentIndex = 0;
   @override
   void initState() {
     super.initState();
-    dataLength = data.length;
+    vehicleList = VehicleApi().fetchVehicleList();
   }
+
 
   void increment(int n) {
     setState(() {
@@ -54,7 +56,7 @@ class _VehicleState extends State<Vehicles> {
     });
   }
 
-  _showDialog(int index) {
+  _showDialog(int index, List<Vehicle> data) {
     _carModel.text = data[index].carModel;
     _carColor.text = data[index].carColor;
     _carModelYear.text = data[index].carModelYear.toString();
@@ -132,9 +134,15 @@ class _VehicleState extends State<Vehicles> {
         ),
         //Replace the body to implement your own screen design
         body: Center(
-          child: dataLength == 0
-              ? Text('No Vehicles Found!!', style: TextStyle(fontSize: 30.0))
-              : Padding(
+          child: FutureBuilder(
+            future: vehicleList,
+                builder: (context, AsyncSnapshot<List<Vehicle>> snapshot){
+              if(snapshot.hasData){
+                var data = snapshot.data;
+                dataLength = data.length;
+                return dataLength == 0
+                    ? Text('No Vehicles Found!!', style: TextStyle(fontSize: 30.0))
+                    : Padding(
                   padding: const EdgeInsets.only(
                       top: 16, right: 8, left: 8, bottom: 0),
                   child: Stack(
@@ -149,8 +157,8 @@ class _VehicleState extends State<Vehicles> {
                               height: size.height / 5,
                               width: size.width / 2,
                               color: Color(
-                                      (math.Random().nextDouble() * 0xFFFFFF)
-                                          .toInt())
+                                  (math.Random().nextDouble() * 0xFFFFFF)
+                                      .toInt())
                                   .withOpacity(1.0),
                             ),
 
@@ -192,18 +200,18 @@ class _VehicleState extends State<Vehicles> {
                             CarDetailRow(
                                 label: "Year",
                                 data:
-                                    data[currentIndex].carModelYear.toString()),
+                                data[currentIndex].carModelYear.toString()),
                             CarDetailRow(
                                 label: "VIN",
                                 data:
-                                    data[currentIndex].carVin.substring(0, 6)),
+                                data[currentIndex].carVin.substring(0, 6)),
                             CarDetailRow(
                                 label: "Price",
                                 data: "\$${data[currentIndex].price}"),
                             CarDetailRow(
                                 label: "Availability",
                                 data:
-                                    data[currentIndex].availability.toString()),
+                                data[currentIndex].availability.toString()),
                           ],
                         ),
                       ),
@@ -215,7 +223,7 @@ class _VehicleState extends State<Vehicles> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                _showDialog(currentIndex);
+                                _showDialog(currentIndex, data);
                               },
                               child: Container(
                                 height: size.height / 16,
@@ -223,10 +231,10 @@ class _VehicleState extends State<Vehicles> {
                                 color: Theme.of(context).primaryColor,
                                 child: Center(
                                     child: Text(
-                                  "Edit",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 26),
-                                )),
+                                      "Edit",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 26),
+                                    )),
                               ),
                             ),
                             SizedBox(
@@ -246,10 +254,10 @@ class _VehicleState extends State<Vehicles> {
                                 color: Theme.of(context).primaryColor,
                                 child: Center(
                                     child: Text(
-                                  "Delete",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 26),
-                                )),
+                                      "Delete",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 26),
+                                    )),
                               ),
                             ),
                           ],
@@ -257,7 +265,14 @@ class _VehicleState extends State<Vehicles> {
                       )
                     ],
                   ),
-                ),
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+                },
+              ),
         ));
   }
 }

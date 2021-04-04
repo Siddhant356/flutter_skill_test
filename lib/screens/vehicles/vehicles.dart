@@ -31,10 +31,9 @@ class _VehicleState extends State<Vehicles> {
     vehicleList = VehicleApi().fetchVehicleList();
   }
 
-
   void increment(int n) {
     setState(() {
-      if(n==0){
+      if (n == 0) {
         dataLength = 0;
       } else if (currentIndex == n - 1) {
         currentIndex = 0;
@@ -46,8 +45,8 @@ class _VehicleState extends State<Vehicles> {
 
   void decrement(int n) {
     setState(() {
-      if(n==0){
-        dataLength=0;
+      if (n == 0) {
+        dataLength = 0;
       } else if (currentIndex == 0) {
         currentIndex = n - 1;
       } else {
@@ -66,10 +65,10 @@ class _VehicleState extends State<Vehicles> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return StatefulBuilder(
-            builder:(context, setState) {return AlertDialog(
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               title: Text("${data[index].car}"),
               content: SingleChildScrollView(
                 child: Column(
@@ -84,15 +83,20 @@ class _VehicleState extends State<Vehicles> {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: Text("Availability :", style: Theme.of(context).textTheme.subtitle1,), ),
+                          child: Text(
+                            "Availability :",
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                        ),
                         Expanded(
                           flex: 0,
-                          child: Checkbox(value: _availability, onChanged: (bool value){
-
-                            setState(() {
-                              _availability = value;
-                            });
-                          }),
+                          child: Checkbox(
+                              value: _availability,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  _availability = value;
+                                });
+                              }),
                         ),
                       ],
                     )
@@ -107,21 +111,22 @@ class _VehicleState extends State<Vehicles> {
                 TextButton(
                   child: Text("Done"),
                   onPressed: () {
-                    setState((){
+                    setState(() {
                       data[index].carModel = _carModel.text;
                       data[index].carColor = _carColor.text;
-                      data[index].carModelYear =int.parse(_carModelYear.text);
+                      data[index].carModelYear = int.parse(_carModelYear.text);
                       data[index].carVin = _carVin.text;
                       data[index].price = _carPrice.text;
                       data[index].availability = _availability;
                     });
                     increment(index);
                     decrement(index);
-                    Navigator.of(context).pop('Done');},
+                    Navigator.of(context).pop('Done');
+                  },
                 ),
               ],
-            );}
-          );
+            );
+          });
         });
   }
 
@@ -136,143 +141,149 @@ class _VehicleState extends State<Vehicles> {
         body: Center(
           child: FutureBuilder(
             future: vehicleList,
-                builder: (context, AsyncSnapshot<List<Vehicle>> snapshot){
-              if(snapshot.hasData){
+            builder: (context, AsyncSnapshot<List<Vehicle>> snapshot) {
+              if (snapshot.hasData) {
                 var data = snapshot.data;
                 dataLength = data.length;
                 return dataLength == 0
-                    ? Text('No Vehicles Found!!', style: TextStyle(fontSize: 30.0))
+                    ? Text('No Vehicles Found!!',
+                        style: TextStyle(fontSize: 30.0))
                     : Padding(
-                  padding: const EdgeInsets.only(
-                      top: 16, right: 8, left: 8, bottom: 0),
-                  child: Stack(
-                    children: [
-                      SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        padding: const EdgeInsets.only(
+                            top: 16, right: 8, left: 8, bottom: 0),
+                        child: Stack(
                           children: [
-                            //Vehicle Image
-                            Container(
-                              height: size.height / 5,
-                              width: size.width / 2,
-                              color: Color(
-                                  (math.Random().nextDouble() * 0xFFFFFF)
-                                      .toInt())
-                                  .withOpacity(1.0),
-                            ),
+                            SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  //Vehicle Image
+                                  Container(
+                                    height: size.height / 5,
+                                    width: size.width / 2,
+                                    color: Color((math.Random().nextDouble() *
+                                                0xFFFFFF)
+                                            .toInt())
+                                        .withOpacity(1.0),
+                                  ),
 
-                            //Icon button row
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                CustomIconButton(
-                                  icon: Icons.keyboard_arrow_left_sharp,
-                                  onPressed: () {
-                                    decrement(dataLength);
-                                  },
-                                ),
-                                Text(
-                                  "${data[currentIndex].car}",
+                                  //Icon button row
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      CustomIconButton(
+                                        icon: Icons.keyboard_arrow_left_sharp,
+                                        onPressed: () {
+                                          decrement(dataLength);
+                                        },
+                                      ),
+                                      Text(
+                                        "${data[currentIndex].car}",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                      CustomIconButton(
+                                        icon: Icons.keyboard_arrow_right_sharp,
+                                        onPressed: () {
+                                          increment(dataLength);
+                                        },
+                                      ),
+                                    ],
+                                  ),
 
-                                  style: TextStyle(fontSize: 30),
-                                ),
-                                CustomIconButton(
-                                  icon: Icons.keyboard_arrow_right_sharp,
-                                  onPressed: () {
-                                    increment(dataLength);
-                                  },
-                                ),
-                              ],
-                            ),
-
-                            SizedBox(
-                              height: 60,
-                            ),
-                            // Vehicle details
-                            CarDetailRow(
-                                label: "Car Model",
-                                data: data[currentIndex].carModel),
-                            CarDetailRow(
-                                label: "Color",
-                                data: data[currentIndex].carColor),
-                            CarDetailRow(
-                                label: "Year",
-                                data:
-                                data[currentIndex].carModelYear.toString()),
-                            CarDetailRow(
-                                label: "VIN",
-                                data:
-                                data[currentIndex].carVin.substring(0, 6)),
-                            CarDetailRow(
-                                label: "Price",
-                                data: "\$${data[currentIndex].price}"),
-                            CarDetailRow(
-                                label: "Availability",
-                                data:
-                                data[currentIndex].availability.toString()),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                _showDialog(currentIndex, data);
-                              },
-                              child: Container(
-                                height: size.height / 16,
-                                width: size.width / 2.5,
-                                color: Theme.of(context).primaryColor,
-                                child: Center(
-                                    child: Text(
-                                      "Edit",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 26),
-                                    )),
+                                  SizedBox(
+                                    height: 60,
+                                  ),
+                                  // Vehicle details
+                                  CarDetailRow(
+                                      label: "Car Model",
+                                      data: data[currentIndex].carModel),
+                                  CarDetailRow(
+                                      label: "Color",
+                                      data: data[currentIndex].carColor),
+                                  CarDetailRow(
+                                      label: "Year",
+                                      data: data[currentIndex]
+                                          .carModelYear
+                                          .toString()),
+                                  CarDetailRow(
+                                      label: "VIN",
+                                      data: data[currentIndex].carVin.length < 6
+                                          ? data[currentIndex].carVin
+                                          : data[currentIndex]
+                                              .carVin
+                                              .substring(0, 6)),
+                                  CarDetailRow(
+                                      label: "Price",
+                                      data: "\$${data[currentIndex].price}"),
+                                  CarDetailRow(
+                                      label: "Availability",
+                                      data: data[currentIndex]
+                                          .availability
+                                          .toString()),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  data.removeAt(currentIndex);
-                                  dataLength = data.length;
-                                  currentIndex = 0;
-                                });
-                              },
-                              child: Container(
-                                height: size.height / 16,
-                                width: size.width / 2.5,
-                                color: Theme.of(context).primaryColor,
-                                child: Center(
-                                    child: Text(
-                                      "Delete",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 26),
-                                    )),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      _showDialog(currentIndex, data);
+                                    },
+                                    child: Container(
+                                      height: size.height / 16,
+                                      width: size.width / 2.5,
+                                      color: Theme.of(context).primaryColor,
+                                      child: Center(
+                                          child: Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 26),
+                                      )),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        data.removeAt(currentIndex);
+                                        dataLength = data.length;
+                                        currentIndex = 0;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: size.height / 16,
+                                      width: size.width / 2.5,
+                                      color: Theme.of(context).primaryColor,
+                                      child: Center(
+                                          child: Text(
+                                        "Delete",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 26),
+                                      )),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      )
-                    ],
-                  ),
-                );
+                      );
               } else {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
               }
-                },
-              ),
+            },
+          ),
         ));
   }
 }
